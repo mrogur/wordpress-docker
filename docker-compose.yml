@@ -4,10 +4,11 @@ services:
      image: mysql:5.7
      volumes:
        - ./db-data:/var/lib/mysql
-     ports:
-       - "${MYSQL_PORT}:3306"   
+     expose:
+       - 3306
      restart: always
      environment:
+       VIRTUAL_HOST: jmusial-db.dev
        MYSQL_ROOT_PASSWORD: haslo
        MYSQL_DATABASE: wordpress
        MYSQL_USER: wordpress
@@ -24,7 +25,7 @@ services:
      volumes:
        - ./wordpress:/var/www/html
      environment:
-       VIRTUAL_HOST: mozzie.dev
+       VIRTUAL_HOST: jmusial.dev
        WORDPRESS_DB_HOST: db
        WORDPRESS_DB_USER: wordpress
        WORDPRESS_DB_PASSWORD: wordpress
@@ -41,7 +42,7 @@ services:
     restart: always
     container_name: "${INSTANCE_PREFIX}_phmyadmin"
     environment:
-       VIRTUAL_HOST: mozziephp.dev
+       VIRTUAL_HOST: jmusial-phpmy.dev
 
 networks:
   default:
