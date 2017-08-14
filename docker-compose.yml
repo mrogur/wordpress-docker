@@ -1,11 +1,13 @@
 version: "2"
 services:
-   db-wpress:
+   db:
      image: mysql:5.7
      volumes:
        - ./db-data:/var/lib/mysql
      expose:
        - 3306
+     ports:
+       - "3306:3306"  
      restart: always
      environment:
        VIRTUAL_HOST: wpress-db.dev
@@ -16,17 +18,18 @@ services:
      container_name: "${INSTANCE_PREFIX}_test_db"
 
    wordpress:
-     depends_on:
-       - db-wpress
      image: jburger/wordpress-xdebug
+     depends_on:
+       - db
      expose:
        - 80
      restart: always
      volumes:
        - ./wordpress:/var/www/html
+       - ./myphp.ini:/usr/local/etc/php/conf.d/myphp.ini
      environment:
        VIRTUAL_HOST: wpress.dev
-       WORDPRESS_DB_HOST: db-wpress
+       WORDPRESS_DB_HOST: db
        WORDPRESS_DB_USER: wordpress
        WORDPRESS_DB_PASSWORD: wordpress
        XDEBUG_CONFIG: "remote_host=${DOCKER_LOCAL_IP} idekey=xdebug"
@@ -36,7 +39,9 @@ services:
    phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     links:
-      - db-wpress
+       - db
+    depends_on:
+       - db
     expose:
       - 80
     restart: always
